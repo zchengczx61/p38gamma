@@ -1,0 +1,153 @@
+{
+	"flow_name" : "9",
+	"steps" : [
+		{
+			"class" : "weka.knowledgeflow.steps.Loader",
+			"properties" : {
+				"loader" : {
+					"type" : "loader",
+					"class" : "weka.core.converters.CSVLoader",
+					"filePath" : "C:/Users/dell/Desktop/p38gamma/(9) prediction/p38_pIC50_fp_train_selected.csv",
+					"useRelativePath" : false,
+					"options" : "-format \"yyyy-MM-dd\\'T\\'HH:mm:ss\" -M ? -B 100 -E \"\\\",\\'\" -F ,"
+				},
+				"name" : "CSVLoader"
+			},
+			"connections" : {
+				"dataSet" : [
+					"ClassAssigner"
+				]
+			},
+			"coordinates" : "40,120"
+		},
+		{
+			"class" : "weka.knowledgeflow.steps.Classifier",
+			"properties" : {
+				"classifier" : {
+					"type" : "optionHandler",
+					"class" : "weka.classifiers.functions.LibSVM",
+					"options" : "-S 4 -K 2 -D 3 -G 0.0 -R 0.0 -N 0.5 -M 40.0 -C 1.0 -E 0.001 -P 0.1 -model \"D:\\\\Program Files\\\\Weka-3-8-5\" -seed 1"
+				},
+				"loadClassifierFileName" : "",
+				"name" : "LibSVM",
+				"resetIncrementalClassifier" : false,
+				"updateIncrementalClassifier" : true
+			},
+			"connections" : {
+				"batchClassifier" : [
+					"PredictionAppender"
+				]
+			},
+			"coordinates" : "400,120"
+		},
+		{
+			"class" : "weka.knowledgeflow.steps.Filter",
+			"properties" : {
+				"filter" : {
+					"type" : "optionHandler",
+					"class" : "weka.filters.unsupervised.attribute.ClassAssigner",
+					"options" : "-C last"
+				},
+				"name" : "ClassAssigner"
+			},
+			"connections" : {
+				"dataSet" : [
+					"TrainingSetMaker"
+				]
+			},
+			"coordinates" : "160,120"
+		},
+		{
+			"class" : "weka.knowledgeflow.steps.Loader",
+			"properties" : {
+				"loader" : {
+					"type" : "loader",
+					"class" : "weka.core.converters.CSVLoader",
+					"filePath" : "C:/Users/dell/Desktop/p38gamma/(9) prediction/Enamine_fp_selected.csv",
+					"useRelativePath" : false,
+					"options" : "-format \"yyyy-MM-dd\\'T\\'HH:mm:ss\" -M ? -B 100 -E \"\\\",\\'\" -F ,"
+				},
+				"name" : "CSVLoader2"
+			},
+			"connections" : {
+				"dataSet" : [
+					"ClassAssigner2"
+				]
+			},
+			"coordinates" : "80,240"
+		},
+		{
+			"class" : "weka.knowledgeflow.steps.TrainingSetMaker",
+			"properties" : {
+				"name" : "TrainingSetMaker"
+			},
+			"connections" : {
+				"trainingSet" : [
+					"LibSVM"
+				]
+			},
+			"coordinates" : "280,120"
+		},
+		{
+			"class" : "weka.knowledgeflow.steps.Filter",
+			"properties" : {
+				"filter" : {
+					"type" : "optionHandler",
+					"class" : "weka.filters.unsupervised.attribute.ClassAssigner",
+					"options" : "-C last"
+				},
+				"name" : "ClassAssigner2"
+			},
+			"connections" : {
+				"dataSet" : [
+					"TestSetMaker"
+				]
+			},
+			"coordinates" : "200,240"
+		},
+		{
+			"class" : "weka.knowledgeflow.steps.TestSetMaker",
+			"properties" : {
+				"name" : "TestSetMaker"
+			},
+			"connections" : {
+				"testSet" : [
+					"LibSVM"
+				]
+			},
+			"coordinates" : "320,240"
+		},
+		{
+			"class" : "weka.knowledgeflow.steps.PredictionAppender",
+			"properties" : {
+				"appendProbabilities" : false,
+				"name" : "PredictionAppender"
+			},
+			"connections" : {
+				"testSet" : [
+					"CSVSaver"
+				]
+			},
+			"coordinates" : "514,120"
+		},
+		{
+			"class" : "weka.knowledgeflow.steps.Saver",
+			"properties" : {
+				"name" : "CSVSaver",
+				"relationNameForFilename" : true,
+				"saver" : {
+					"type" : "saver",
+					"class" : "weka.core.converters.CSVSaver",
+					"filePath" : "",
+					"dir" : "C:/Users/dell/Desktop/p38gamma/(9) prediction/prediction",
+					"prefix" : "",
+					"useRelativePath" : false,
+					"options" : "-F , -M ? -decimal 6"
+				}
+			},
+			"connections" : {
+			},
+			"coordinates" : "513,249"
+		}
+	]
+}
